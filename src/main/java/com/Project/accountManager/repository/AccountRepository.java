@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AccountRepository extends JpaRepository<Account,Long> {
 //List<Account> findByUserId(long userId); //Check again to set up more than one account.
+List<Account> findByUserId(Long userId);
 }

@@ -3,6 +3,7 @@ package com.Project.accountManager.services;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
+import com.Project.accountManager.request.AccountCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +14,33 @@ import java.util.Optional;
 public class AccountServices {
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    UserServices userServices;
 
-    public AccountServices(AccountRepository accountRepository) {
+    public AccountServices(AccountRepository accountRepository, UserServices userServices) {
         this.accountRepository = accountRepository;
+        this.userServices = userServices;
     }
 
-    public Account saveOneAccount(Account newAccount){
-        return accountRepository.save(newAccount);
+    public Account saveOneAccount(AccountCreateRequest newAccount){
+        User user=userServices.getOneUser(newAccount.getUserId());
+        if(user==null) {
+            return null;
+        }
+        Account toSave=new Account();
+        toSave.setId(newAccount.getId());
+        toSave.setAccountNumber(newAccount.getAccountNumber());
+        toSave.setMoney(newAccount.getMoney());
+        toSave.setUser(user);
+        return accountRepository.save(toSave);
     }
 
-    public List<Account> getAllAccount(){
-        return accountRepository.findAll();
+    public List<Account> getAllAccount(Optional<Long> userId){
+        if (userId.isPresent()){
+            return accountRepository.findByUserId(userId.get());
+        }else {
+            return accountRepository.findAll();
+        }
     }
 
     public Account getOneAccount(Long accountId){
