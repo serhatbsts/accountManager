@@ -20,8 +20,6 @@ public class Account {
     @JsonIgnore
     User user;
 
-
-
     public void setId(Long id) {
         this.id = id;
     }
