@@ -2,6 +2,7 @@ package com.Project.accountManager.controllers;
 
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.request.AccountCreateRequest;
+import com.Project.accountManager.request.AccountUpdateRequest;
 import com.Project.accountManager.services.AccountServices;
 import com.Project.accountManager.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,14 @@ public class AccountController {
     public Account getOneAccount(@PathVariable Long accountId){
         return accountServices.getOneAccount(accountId);
     }
-  @PutMapping("/withdrawFromAccount/{accountId}")
-    public Account withdrawFromAccount(@PathVariable Long accountId,@RequestBody int withdrawAmount){
-        return accountServices.withdrawFromAccount(accountId,withdrawAmount);
+  @PutMapping("/{accountId}")
+    public Account withdrawFromAccount(@PathVariable Long accountId,@RequestBody AccountUpdateRequest accountUpdateRequest){
+        return accountServices.addFundsToAccount(accountId,accountUpdateRequest);
     }
-   @PutMapping("/addFundsToAccount/{accountId}")
+   /*@PutMapping("/addFundsToAccount/{accountId}")
     public Account addFundsToAccount(@PathVariable Long accountId,@RequestBody int depositAmount){
         return accountServices.withdrawFromAccount(accountId,depositAmount);
     }
+
+    */
 }

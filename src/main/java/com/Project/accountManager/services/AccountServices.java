@@ -4,6 +4,7 @@ import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
 import com.Project.accountManager.request.AccountCreateRequest;
+import com.Project.accountManager.request.AccountUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,17 +48,31 @@ public class AccountServices {
         return accountRepository.findById(accountId).orElse(null);
     }
 
-    public Account addFundsToAccount(Long accountId,int depositAmount){
-       Optional<Account> account=accountRepository.findById(accountId);
+    public Account addFundsToAccount(Long accountId, AccountUpdateRequest accountUpdateRequest){
+      /* Optional<Account> account=accountRepository.findById(accountId);
        if (account.isPresent()){
            Account foundAccount=account.get();
-           foundAccount.setMoney(foundAccount.getMoney()+depositAmount);
+          foundAccount.setMoney(foundAccount.getMoney()+depositAmount);
            accountRepository.save(foundAccount);
            return foundAccount;
        }
        else return null;
+
+       */
+
+        Optional<Account> account=accountRepository.findById(accountId);
+        if (account.isPresent()){
+            Account toUpdate=account.get();
+            toUpdate.setMoney(accountUpdateRequest.getMoney());
+            accountRepository.save(toUpdate);
+            return toUpdate;
+        }else return null;
+
+
+
+
     }
-    public Account withdrawFromAccount(Long accountId,int withdrawAmount){
+   /* public Account withdrawFromAccount(Long accountId,int withdrawAmount){
         Optional<Account> account=accountRepository.findById(accountId);
         if (account.isPresent()){
             Account foundAccount=account.get();
@@ -70,6 +85,8 @@ public class AccountServices {
             return null;
         }
     }
+
+    */
 
     public void deleteById(Long accountId){
         accountRepository.deleteById(accountId);
