@@ -14,6 +14,7 @@ public class Account {
     private Long id;
     int money;
     int accountNumber;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

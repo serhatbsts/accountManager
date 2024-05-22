@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class AccountCreateRequest {
     Long id;
-    int money;
     int accountNumber;
+    int money;
     Long userId;
 
 }

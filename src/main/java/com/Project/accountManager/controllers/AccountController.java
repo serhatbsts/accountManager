@@ -43,10 +43,5 @@ public class AccountController {
     public Account withdrawFromAccount(@PathVariable Long accountId,@RequestBody AccountUpdateRequest accountUpdateRequest){
         return accountServices.addFundsToAccount(accountId,accountUpdateRequest);
     }
-   /*@PutMapping("/addFundsToAccount/{accountId}")
-    public Account addFundsToAccount(@PathVariable Long accountId,@RequestBody int depositAmount){
-        return accountServices.withdrawFromAccount(accountId,depositAmount);
-    }
 
-    */
 }
