@@ -43,5 +43,9 @@ public class AccountController {
     public Account withdrawFromAccount(@PathVariable Long accountId,@RequestBody AccountUpdateRequest accountUpdateRequest){
         return accountServices.addFundsToAccount(accountId,accountUpdateRequest);
     }
+    @DeleteMapping("/{accountId}")
+    public void deleteOneAccount(@PathVariable Long accountId){
+        accountServices.deleteById(accountId);
+    }
 
 }
