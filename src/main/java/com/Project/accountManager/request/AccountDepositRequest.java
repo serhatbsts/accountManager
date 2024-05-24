@@ -3,7 +3,6 @@ package com.Project.accountManager.request;
 import lombok.Data;
 
 @Data
-public class AccountUpdateRequest {
-
-   // int withdrawalAmount;
+public class AccountDepositRequest {
+    int depositAmount;
 }

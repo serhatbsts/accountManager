@@ -4,7 +4,9 @@ import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
 import com.Project.accountManager.request.AccountCreateRequest;
+import com.Project.accountManager.request.AccountDepositRequest;
 import com.Project.accountManager.request.AccountUpdateRequest;
+import com.Project.accountManager.request.AccountWithdrawalRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,15 +51,27 @@ public class AccountService {
         return accountRepository.findById(accountId).orElse(null);
     }
 
-    public Account updateOneAccount(Long accountId, AccountUpdateRequest accountUpdateRequest) {
+    public Account depositOneAccount(Long accountId, AccountDepositRequest accountDepositRequest) {
         Optional<Account> account = accountRepository.findById(accountId);
         if (account.isPresent()) {
             Account toUpdate = account.get();
-            toUpdate.setMoney(accountUpdateRequest.getMoney());
+            toUpdate.setMoney(toUpdate.getMoney()+accountDepositRequest.getDepositAmount());
             accountRepository.save(toUpdate);
             return toUpdate;
         } else return null;            //custom exception add
     }
+    public Account withdrawalAccount(Long accountId, AccountWithdrawalRequest accountWithdrawalRequest) {
+        Optional<Account> account = accountRepository.findById(accountId);
+        if (account.isPresent()) {
+            Account toUpdate = account.get();
+            //the amount of money withdrawn may be more than the amount in the account, correct this situation
+            toUpdate.setMoney(toUpdate.getMoney()-accountWithdrawalRequest.getWithdrawalAmount());
+            accountRepository.save(toUpdate);
+            return toUpdate;
+        } else return null;            //custom exception add
+    }
+
+
 
     public void deleteOneAccount(Long accountId){
         accountRepository.deleteById(accountId);
