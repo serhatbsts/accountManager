@@ -7,7 +7,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@Table(name = "account")
+@Table(name = "user_accounts")
 @Data
 public class Account {
     @Id
@@ -20,12 +20,4 @@ public class Account {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     User user;
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
 }

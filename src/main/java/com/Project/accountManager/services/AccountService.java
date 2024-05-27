@@ -5,7 +5,6 @@ import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
 import com.Project.accountManager.request.AccountCreateRequest;
 import com.Project.accountManager.request.AccountDepositRequest;
-import com.Project.accountManager.request.AccountUpdateRequest;
 import com.Project.accountManager.request.AccountWithdrawalRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +14,8 @@ import java.util.Optional;
 
 @Service
 public class AccountService {
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    UserService userService;
+    private final AccountRepository accountRepository;
+    private final UserService userService;
 
     public AccountService(AccountRepository accountRepository, UserService userService) {
         this.accountRepository = accountRepository;
@@ -55,25 +52,25 @@ public class AccountService {
         Optional<Account> account = accountRepository.findById(accountId);
         if (account.isPresent()) {
             Account toUpdate = account.get();
-            toUpdate.setMoney(toUpdate.getMoney()+accountDepositRequest.getDepositAmount());
+            toUpdate.setMoney(toUpdate.getMoney() + accountDepositRequest.getDepositAmount());
             accountRepository.save(toUpdate);
             return toUpdate;
         } else return null;            //custom exception add
     }
+
     public Account withdrawalAccount(Long accountId, AccountWithdrawalRequest accountWithdrawalRequest) {
         Optional<Account> account = accountRepository.findById(accountId);
         if (account.isPresent()) {
             Account toUpdate = account.get();
             //the amount of money withdrawn may be more than the amount in the account, correct this situation
-            toUpdate.setMoney(toUpdate.getMoney()-accountWithdrawalRequest.getWithdrawalAmount());
+            toUpdate.setMoney(toUpdate.getMoney() - accountWithdrawalRequest.getWithdrawalAmount());
             accountRepository.save(toUpdate);
             return toUpdate;
         } else return null;            //custom exception add
     }
 
 
-
-    public void deleteOneAccount(Long accountId){
+    public void deleteOneAccount(Long accountId) {
         accountRepository.deleteById(accountId);
     }
 

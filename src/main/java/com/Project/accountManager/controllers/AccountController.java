@@ -3,7 +3,6 @@ package com.Project.accountManager.controllers;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.request.AccountCreateRequest;
 import com.Project.accountManager.request.AccountDepositRequest;
-import com.Project.accountManager.request.AccountUpdateRequest;
 import com.Project.accountManager.request.AccountWithdrawalRequest;
 import com.Project.accountManager.services.AccountService;
 import com.Project.accountManager.services.UserService;
@@ -14,13 +13,12 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/user_accounts")
 public class AccountController {
 
-    @Autowired
-    AccountService accountService;
-    @Autowired
-    UserService userService;
+
+    private final AccountService accountService;
+    private final UserService userService;
 
     public AccountController(UserService userService, AccountService accountService) {
         this.userService = userService;
@@ -46,17 +44,16 @@ public class AccountController {
     public Account depositOneAccount(@PathVariable Long accountId, @RequestBody AccountDepositRequest accountDepositRequest) {
         return accountService.depositOneAccount(accountId, accountDepositRequest);
     }
-       @PutMapping("/withdrawal/{accountId}")
+
+    @PutMapping("/withdrawal/{accountId}")
     public Account withdrawalAccount(@PathVariable Long accountId, @RequestBody AccountWithdrawalRequest accountWithdrawalRequest) {
         return accountService.withdrawalAccount(accountId, accountWithdrawalRequest);
     }
-
 
 
     @DeleteMapping("/{accountId}")
     public void deleteOneAccount(@PathVariable Long accountId) {
         accountService.deleteOneAccount(accountId);
     }
-
 
 }

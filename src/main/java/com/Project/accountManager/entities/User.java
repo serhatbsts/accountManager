@@ -6,7 +6,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name="user")
+@Table(name = "user")
 @Data
 public class User {
     @Id
@@ -14,11 +14,4 @@ public class User {
     String name;
     String surName;
     int password;
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
 }
