@@ -1,6 +1,8 @@
 package com.Project.accountManager.controllers;
 
+import com.Project.accountManager.dto.UserDTO;
 import com.Project.accountManager.entities.User;
+import com.Project.accountManager.repository.UserRepository;
 import com.Project.accountManager.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +29,16 @@ public class UserController {
         return userService.saveOneUser(newUser);
     }
 
-    @GetMapping("/{userId}")
+ /*   @GetMapping("/{userId}")
     public User getOneUser(@PathVariable Long userId) {
         return userService.getOneUser(userId);
+    }
+
+  */
+    @GetMapping("/{userId}")
+    public UserDTO getOneUser(@PathVariable Long userId) {
+        User user=userService.getOneUser(userId);
+        return userService.convertToDto(user);
     }
 
     @PutMapping("/{userId}")
