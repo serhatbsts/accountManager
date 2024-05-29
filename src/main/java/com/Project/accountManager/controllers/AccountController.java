@@ -40,7 +40,7 @@ public class AccountController {
         return accountService.getOneAccount(accountId);
     }
 
-    @PutMapping("/deposit/{accountId} ")
+    @PutMapping("/deposit/{accountId}")
     public Account depositOneAccount(@PathVariable Long accountId, @RequestBody AccountDepositRequest accountDepositRequest) {
         return accountService.depositOneAccount(accountId, accountDepositRequest);
     }
