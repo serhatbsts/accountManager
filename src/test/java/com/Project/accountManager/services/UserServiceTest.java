@@ -1,6 +1,5 @@
 package com.Project.accountManager.services;
 
-import com.Project.accountManager.dto.UserDTO;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,12 +43,12 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testGetOneUser() {
+    public void testGetUserById() {
         Long userId = 1L;
         User user = new User();
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        User result = userService.getOneUser(userId);
+        User result = userService.getUserById(userId);
 
         assertEquals(user.getName(), result.getName());
         assertEquals(user.getSurName(), result.getSurName());
