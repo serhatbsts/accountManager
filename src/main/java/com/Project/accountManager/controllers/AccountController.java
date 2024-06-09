@@ -1,12 +1,12 @@
 package com.Project.accountManager.controllers;
 
+import com.Project.accountManager.dto.AccountResponse;
 import com.Project.accountManager.entities.Account;
-import com.Project.accountManager.request.AccountCreateRequest;
-import com.Project.accountManager.request.AccountDepositRequest;
-import com.Project.accountManager.request.AccountWithdrawalRequest;
+import com.Project.accountManager.dto.request.AccountCreateRequest;
+import com.Project.accountManager.dto.request.AccountDepositRequest;
+import com.Project.accountManager.dto.request.AccountWithdrawalRequest;
 import com.Project.accountManager.services.AccountService;
-import com.Project.accountManager.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,12 +16,9 @@ import java.util.Optional;
 @RequestMapping("/user_accounts")
 public class AccountController {
 
-
     private final AccountService accountService;
-    private final UserService userService;
 
-    public AccountController(UserService userService, AccountService accountService) {
-        this.userService = userService;
+    public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
@@ -31,8 +28,8 @@ public class AccountController {
     }
 
     @PostMapping
-    public Account createAccount(@RequestBody AccountCreateRequest newAccount) {
-        return accountService.saveOneAccount(newAccount);
+    public ResponseEntity<AccountResponse> createAccount(@RequestBody AccountCreateRequest newAccount) {
+        return ResponseEntity.ok(accountService.createAccount(newAccount));
     }
 
     @GetMapping("/{accountId}")

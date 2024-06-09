@@ -3,7 +3,6 @@ package com.Project.accountManager.services;
 import com.Project.accountManager.dto.UserDTO;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,7 +35,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getOneUser(Long userId) {
+    public User getUserById(Long userId) {
         return userRepository.findById(userId).orElse(null);
     }
 

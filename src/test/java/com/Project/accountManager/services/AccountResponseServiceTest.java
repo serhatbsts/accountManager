@@ -1,25 +1,31 @@
 package com.Project.accountManager.services;
 
+import com.Project.accountManager.dto.AccountResponse;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
-import com.Project.accountManager.request.AccountCreateRequest;
-import com.Project.accountManager.request.AccountDepositRequest;
-import com.Project.accountManager.request.AccountWithdrawalRequest;
-import org.junit.jupiter.api.BeforeEach;
+import com.Project.accountManager.dto.request.AccountCreateRequest;
+import com.Project.accountManager.dto.request.AccountDepositRequest;
+import com.Project.accountManager.dto.request.AccountWithdrawalRequest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class AccountServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class AccountResponseServiceTest {
 
     @Mock
     private AccountRepository accountRepository;
@@ -28,39 +34,24 @@ public class AccountServiceTest {
     private UserService userService;
 
     @InjectMocks
-    private AccountService accountService;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+    private AccountService underTest;
 
     @Test
-    public void testSaveOneAccount() {
-
-        Long userId = 1L;
-        AccountCreateRequest accountCreateRequest = new AccountCreateRequest();
-        accountCreateRequest.setUserId(userId);
+    public void createAccountWhenUserExist() {
+        var accountCreateRequest = new AccountCreateRequest();
         accountCreateRequest.setId(1L);
+        accountCreateRequest.setUserId(2L);
         accountCreateRequest.setAccountNumber(1324);
         accountCreateRequest.setMoney(50);
 
-        User user = new User();
-        when(userService.getOneUser(userId)).thenReturn(user);
+        var user = new User();
+        when(userService.getUserById(accountCreateRequest.getUserId())).thenReturn(user);
 
-        Account accountToSave = new Account();
-        accountToSave.setId(accountCreateRequest.getId());
-        accountToSave.setAccountNumber(accountCreateRequest.getAccountNumber());
-        accountToSave.setMoney(accountCreateRequest.getMoney());
-        accountToSave.setUser(user);
-        when(accountRepository.save(any(Account.class))).thenReturn(accountToSave);
+        AccountResponse actual = underTest.createAccount(accountCreateRequest);
 
-        Account savedAccount = accountService.saveOneAccount(accountCreateRequest);
-
-        assertEquals(accountCreateRequest.getId(), savedAccount.getId());
-        assertEquals(accountCreateRequest.getAccountNumber(), savedAccount.getAccountNumber());
-        assertEquals(accountCreateRequest.getMoney(), savedAccount.getMoney());
-        assertEquals(user, savedAccount.getUser());
+        assertEquals(accountCreateRequest.getAccountNumber(), actual.getAccountNumber());
+        assertEquals(accountCreateRequest.getMoney(), actual.getMoney());
+        assertEquals(user.getName(), actual.getUserName());
     }
 
     @Test
@@ -73,7 +64,7 @@ public class AccountServiceTest {
         accounts.add(new Account());
         when(accountRepository.findByUserId(userId)).thenReturn(accounts);
 
-        List<Account> result = accountService.getAllAccount(optionalUserId);
+        List<Account> result = underTest.getAllAccount(optionalUserId);
 
         assertEquals(accounts.size(), result.size());
         assertEquals(accounts.get(0).getAccountNumber(), result.get(0).getAccountNumber());
@@ -86,7 +77,7 @@ public class AccountServiceTest {
         Account account = new Account();
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
-        Account result = accountService.getOneAccount(accountId);
+        Account result = underTest.getOneAccount(accountId);
 
         assertEquals(account.getId(), result.getId());
         assertEquals(account.getAccountNumber(), result.getAccountNumber());
@@ -106,15 +97,13 @@ public class AccountServiceTest {
 
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(mockAccount));
 
-        Account updatedAccount = accountService.depositOneAccount(accountId, accountDepositRequest);
+        Account updatedAccount = underTest.depositOneAccount(accountId, accountDepositRequest);
 
         verify(accountRepository, times(1)).findById(anyLong());
         verify(accountRepository, times(1)).save(any());
 
         assertEquals(1500, updatedAccount.getMoney(), "Balance should be 1500 after deposit");
     }
-
-
 
     @Test
     public void testWithdrawalOneAccount() {
@@ -130,7 +119,7 @@ public class AccountServiceTest {
         withdrawalRequest.setWithdrawalAmount(withdrawalAmount);
         when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
-        Account result = accountService.withdrawalAccount(accountId, withdrawalRequest);
+        Account result = underTest.withdrawalAccount(accountId, withdrawalRequest);
 
         assertEquals(account.getId(), result.getId());
         assertEquals(account.getAccountNumber(), result.getAccountNumber());
@@ -140,12 +129,11 @@ public class AccountServiceTest {
         verify(accountRepository, times(1)).save(any());
     }
 
-
     @Test
     public void testDeleteOneAccount() {
         Long accountId = 1L;
 
-        accountService.deleteOneAccount(accountId);
+        underTest.deleteOneAccount(accountId);
 
         verify(accountRepository, times(1)).deleteById(accountId);
     }
