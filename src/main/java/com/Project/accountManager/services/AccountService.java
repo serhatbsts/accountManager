@@ -1,12 +1,12 @@
 package com.Project.accountManager.services;
 
+import com.Project.accountManager.dto.AccountResponse;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
-import com.Project.accountManager.request.AccountCreateRequest;
-import com.Project.accountManager.request.AccountDepositRequest;
-import com.Project.accountManager.request.AccountWithdrawalRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Project.accountManager.dto.request.AccountCreateRequest;
+import com.Project.accountManager.dto.request.AccountDepositRequest;
+import com.Project.accountManager.dto.request.AccountWithdrawalRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,18 +22,20 @@ public class AccountService {
         this.userService = userService;
     }
 
-    public Account saveOneAccount(AccountCreateRequest newAccount) {
-        User user = userService.getOneUser(newAccount.getUserId());
+    public AccountResponse createAccount(AccountCreateRequest newAccount) {
+        User user = userService.getUserById(newAccount.getUserId());
         if (user == null) {
             return null;
             //custom exception add
         }
-        Account toSave = new Account();
-        toSave.setId(newAccount.getId());
-        toSave.setAccountNumber(newAccount.getAccountNumber());
-        toSave.setMoney(newAccount.getMoney());
-        toSave.setUser(user);
-        return accountRepository.save(toSave);
+        Account account=Account.toEntity(newAccount,user);
+        accountRepository.save(account);
+        return AccountResponse.builder()
+                .accountNumber(account.getAccountNumber())
+                .money(account.getMoney())
+                .userName(account.getUser().getName())
+                .build();
+
     }
 
     public List<Account> getAllAccount(Optional<Long> userId) {
