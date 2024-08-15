@@ -29,8 +29,8 @@ public class AccountService {
             //custom exception add
         }
         Account toSave = new Account();
-        toSave.setId(newAccount.getId());
-        toSave.setAccountNumber(newAccount.getAccountNumber());
+      //  toSave.setId(newAccount.getId());
+     //   toSave.setAccountNumber(newAccount.getAccountNumber());
         toSave.setMoney(newAccount.getMoney());
         toSave.setUser(user);
         return accountRepository.save(toSave);
