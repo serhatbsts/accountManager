@@ -50,6 +50,7 @@ public class AccountController {
     @DeleteMapping("/{accountId}")
     public void deleteOneAccount(@PathVariable Long accountId) {
         accountService.deleteOneAccount(accountId);
+
     }
 
 }

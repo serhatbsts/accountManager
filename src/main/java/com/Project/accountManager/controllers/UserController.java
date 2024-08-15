@@ -29,12 +29,6 @@ public class UserController {
         return userService.saveOneUser(newUser);
     }
 
- /*   @GetMapping("/{userId}")
-    public User getOneUser(@PathVariable Long userId) {
-        return userService.getOneUser(userId);
-    }
-
-  */
     @GetMapping("/{userId}")
     public UserDTO getOneUser(@PathVariable Long userId) {
         User user=userService.getUserById(userId);
