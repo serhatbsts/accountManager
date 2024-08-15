@@ -24,7 +24,7 @@ public class Account {
     @JsonIgnore
     User user;
 
-    public static Account toEntity(AccountCreateRequest createRequest,User user){
+   public static Account toEntity(AccountCreateRequest createRequest,User user){
         Account account=new Account();
         account.setMoney(createRequest.getMoney());
         account.setAccountNumber(createRequest.getAccountNumber());

@@ -1,6 +1,5 @@
 package com.Project.accountManager.controllers;
 
-import com.Project.accountManager.dto.AccountResponse;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.dto.request.AccountCreateRequest;
 import com.Project.accountManager.dto.request.AccountDepositRequest;
@@ -26,10 +25,11 @@ public class AccountController {
         return accountService.getAllAccount(userId);
     }
 
-    @PostMapping
-    public ResponseEntity<AccountResponse> createAccount(@RequestBody AccountCreateRequest newAccount) {
-        return ResponseEntity.ok(accountService.createAccount(newAccount));
+   @PostMapping
+    public Account createAccount(@RequestBody AccountCreateRequest newAccount) {
+        return accountService.createAccount(newAccount);
     }
+
 
     @GetMapping("/{accountId}")
     public Account getOneAccount(@PathVariable Long accountId) {

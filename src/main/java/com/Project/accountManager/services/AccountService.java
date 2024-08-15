@@ -1,6 +1,5 @@
 package com.Project.accountManager.services;
 
-import com.Project.accountManager.dto.AccountResponse;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
@@ -22,22 +21,20 @@ public class AccountService {
         this.userService = userService;
     }
 
-    public AccountResponse createAccount(AccountCreateRequest newAccount) {
+
+   public Account createAccount(AccountCreateRequest newAccount) {
         User user = userService.getUserById(newAccount.getUserId());
         if (user == null) {
             return null;
             //custom exception add
         }
-        Account account=Account.toEntity(newAccount,user);
-        accountRepository.save(account);
-        return AccountResponse.builder()
-                .accountNumber(account.getAccountNumber())
-                .money(account.getMoney())
-                .userName(account.getUser().getName())
-                .build();
-
+        Account toSave = new Account();
+        toSave.setId(newAccount.getId());
+        toSave.setAccountNumber(newAccount.getAccountNumber());
+        toSave.setMoney(newAccount.getMoney());
+        toSave.setUser(user);
+        return accountRepository.save(toSave);
     }
-
     public List<Account> getAllAccount(Optional<Long> userId) {
         if (userId.isPresent()) {
             return accountRepository.findByUserId(userId.get());
