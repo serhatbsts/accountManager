@@ -1,6 +1,6 @@
 package com.Project.accountManager.entities;
 
-import com.Project.accountManager.dto.request.AccountCreateRequest;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,7 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.util.Random;
-import java.util.UUID;
+
 
 @Entity
 @Table(name = "user_accounts")
@@ -18,7 +18,7 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    int money; //big decimal yap ve money yerine balaceyi kullan
+    BigDecimal balance;
     @Column(unique = true)
     private String accountNumber;//stringe çevir
 

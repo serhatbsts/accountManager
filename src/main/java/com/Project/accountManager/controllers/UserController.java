@@ -2,9 +2,7 @@ package com.Project.accountManager.controllers;
 
 import com.Project.accountManager.dto.UserDTO;
 import com.Project.accountManager.entities.User;
-import com.Project.accountManager.repository.UserRepository;
 import com.Project.accountManager.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
