@@ -1,5 +1,6 @@
 package com.Project.accountManager.services;
 
+import com.Project.accountManager.dto.UserDTO;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,67 +8,90 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import java.util.Arrays;
-import java.util.List;
+
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 public class UserServiceTest {
+
     @Mock
     private UserRepository userRepository;
+
     @InjectMocks
     private UserService userService;
+
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-    @Test
-    public void testGetAllUsers() {
-        User user1 = new User();
-        User user2 = new User();
-        List<User> userList = Arrays.asList(user1, user2);
-        when(userRepository.findAll()).thenReturn(userList);
-        List<User> result = userService.getAllUser();
-        assertEquals(2, result.size());
-        assertEquals(user1.getName(), result.get(0).getName());
-        assertEquals(user2.getName(), result.get(1).getName());
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetUserById() {
-        Long userId = 1L;
+    public void testConvertToDto() {
         User user = new User();
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        User result = userService.getUserById(userId);
+        user.setName("Serhat");
+        user.setSurName("Bestas");
 
-        assertEquals(user.getName(), result.getName());
-        assertEquals(user.getSurName(), result.getSurName());
+        UserDTO userDTO = userService.convertToDto(user);
+
+        assertNotNull(userDTO);
+        assertEquals("Serhat", userDTO.getName());
+        assertEquals("Bestas", userDTO.getSurName());
     }
+
     @Test
     public void testSaveOneUser() {
-        User newUser = new User();
-        User savedUser = new User();
-        when(userRepository.save(newUser)).thenReturn(savedUser);
-        User result = userService.saveOneUser(newUser);
-        assertEquals(savedUser.getId(), result.getId());
-        assertEquals(savedUser.getName(), result.getName());
-        assertEquals(savedUser.getSurName(), result.getSurName());
+        User user = new User();
+        user.setName("Serhat");
+        user.setSurName("Bestas");
+
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        User savedUser = userService.saveOneUser(user);
+
+        assertNotNull(savedUser);
+        assertEquals("Serhat", savedUser.getName());
     }
+
     @Test
-    public void testUpdateOneUser() {
-        Long userId = 1L;
+    public void testUpdateOneUser_Success() {
+        User existingUser = new User();
+        existingUser.setId(1L);
+        existingUser.setName("Serhat");
+        existingUser.setSurName("Bestas");
+
         User updatedUser = new User();
-        when(userRepository.findById(userId)).thenReturn(Optional.of(updatedUser));
-        User result = userService.updateOneUser(userId, updatedUser);
-        assertEquals(updatedUser.getId(), result.getId());
-        assertEquals(updatedUser.getName(), result.getName());
-        assertEquals(updatedUser.getSurName(), result.getSurName());
-        assertEquals(updatedUser.getPassword(), result.getPassword());
+        updatedUser.setName("Serkan");
+        updatedUser.setSurName("Bestas");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenReturn(existingUser);
+
+        User result = userService.updateOneUser(1L, updatedUser);
+
+        assertNotNull(result);
+        assertEquals("Serkan", result.getName());
     }
+
+    @Test
+    public void testUpdateOneUser_NotFound() {
+        User user = new User();
+        user.setName("Serkan");
+
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        User result = userService.updateOneUser(1L, user);
+
+        assertNull(result);
+    }
+
     @Test
     public void testDeleteOneUser() {
-        Long userId = 1L;
-        userService.deleteOneUser(userId);
-        verify(userRepository, times(1)).deleteById(userId);
+        doNothing().when(userRepository).deleteById(1L);
+
+        userService.deleteOneUser(1L);
+
+        verify(userRepository, times(1)).deleteById(1L);
     }
 }
