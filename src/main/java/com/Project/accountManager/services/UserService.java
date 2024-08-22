@@ -48,6 +48,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public boolean isEmailRegistered(String email){
+        return userRepository.existsByEmail(email);
+    }
+
     public User updateOneUser(Long userId, User newUser) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
