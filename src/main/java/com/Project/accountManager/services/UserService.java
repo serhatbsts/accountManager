@@ -37,6 +37,9 @@ public class UserService {
     }
 
     public User saveOneUser(CreateUserRequest newUser) {
+        if (userRepository.existsByEmail(newUser.getEmail())){
+            throw new IllegalArgumentException("This email address is already registered.");
+        }
         User user = new User();
         user.setEmail(newUser.getEmail());
         user.setName(newUser.getName());

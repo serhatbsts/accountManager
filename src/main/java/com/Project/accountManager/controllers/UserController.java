@@ -29,11 +29,6 @@ public class UserController {
         return userService.saveOneUser(newUser);
     }
 
-  /*  @GetMapping("/login")
-    public UserDTO getOneUser(@PathVariable Long userId) {
-        User user=userService.getUserById(userId);
-        return userService.convertToDto(user);
-    }*/
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginUserRequest loginRequest){
         User loggedInUser=userService.login(loginRequest.getEmail(), loginRequest.getPassword());
