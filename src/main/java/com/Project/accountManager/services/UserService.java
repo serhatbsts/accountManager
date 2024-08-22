@@ -1,6 +1,7 @@
 package com.Project.accountManager.services;
 
 import com.Project.accountManager.dto.UserDTO;
+import com.Project.accountManager.dto.userRequest.CreateUserRequest;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -27,12 +28,21 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long userId) {
+  /*  public User getUserById(Long userId) {
         return userRepository.findById(userId).orElse(null);
+    }*/
+    public User login(String email,int password){
+        User user=userRepository.findByEmailAndPassword(email,password);
+        return user;
     }
 
-    public User saveOneUser(User newUser) {
-        return userRepository.save(newUser);
+    public User saveOneUser(CreateUserRequest newUser) {
+        User user = new User();
+        user.setEmail(newUser.getEmail());
+        user.setName(newUser.getName());
+        user.setSurName(newUser.getSurName());
+        user.setPassword(newUser.getPassword());
+        return userRepository.save(user);
     }
 
     public User updateOneUser(Long userId, User newUser) {

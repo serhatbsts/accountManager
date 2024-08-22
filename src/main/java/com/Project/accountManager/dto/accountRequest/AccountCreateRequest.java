@@ -1,4 +1,4 @@
-package com.Project.accountManager.dto.request;
+package com.Project.accountManager.dto.accountRequest;
 
 import lombok.Data;
 

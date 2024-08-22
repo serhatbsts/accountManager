@@ -1,11 +1,9 @@
 package com.Project.accountManager.services;
 
 import com.Project.accountManager.entities.Account;
-import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
-import com.Project.accountManager.dto.request.AccountCreateRequest;
-import com.Project.accountManager.dto.request.AccountDepositRequest;
-import com.Project.accountManager.dto.request.AccountWithdrawalRequest;
+import com.Project.accountManager.dto.accountRequest.AccountDepositRequest;
+import com.Project.accountManager.dto.accountRequest.AccountWithdrawalRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +20,7 @@ public class AccountService {
     }
 
 
-   public Account createAccount(AccountCreateRequest newAccount) {
+ /*  public Account createAccount(AccountCreateRequest newAccount) {
         User user = userService.getUserById(newAccount.getUserId());
         if (user == null) {
             return null;
@@ -34,7 +32,7 @@ public class AccountService {
         toSave.setBalance(newAccount.getBalance());
         toSave.setUser(user);
         return accountRepository.save(toSave);
-    }
+    }*/
     public List<Account> getAllAccount(Optional<Long> userId) {
         if (userId.isPresent()) {
             return accountRepository.findByUserId(userId.get());

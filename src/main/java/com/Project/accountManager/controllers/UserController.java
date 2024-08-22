@@ -1,8 +1,10 @@
 package com.Project.accountManager.controllers;
 
-import com.Project.accountManager.dto.UserDTO;
+import com.Project.accountManager.dto.userRequest.CreateUserRequest;
+import com.Project.accountManager.dto.userRequest.LoginUserRequest;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.services.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,15 +24,24 @@ public class UserController {
         return userService.getAllUser();
     }
 
-    @PostMapping
-    public User createUser(@RequestBody User newUser) {
+    @PostMapping("/createUser")
+    public User createUser(@RequestBody CreateUserRequest newUser) {
         return userService.saveOneUser(newUser);
     }
 
-    @GetMapping("/{userId}")
+  /*  @GetMapping("/login")
     public UserDTO getOneUser(@PathVariable Long userId) {
         User user=userService.getUserById(userId);
         return userService.convertToDto(user);
+    }*/
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginUserRequest loginRequest){
+        User loggedInUser=userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+        if (loggedInUser!=null){
+            return ResponseEntity.ok("Başarılı Giriş");
+        }else {
+            return ResponseEntity.status(401).body("Kullanıcı adı veya şifre yanlış!");
+        }
     }
 
     @PutMapping("/{userId}")
