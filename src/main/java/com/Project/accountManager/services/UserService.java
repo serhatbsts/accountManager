@@ -5,6 +5,7 @@ import com.Project.accountManager.dto.userRequest.CreateUserRequest;
 import com.Project.accountManager.dto.userRequest.UpdateUserRequest;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.UserRepository;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -33,6 +34,7 @@ public class UserService {
     }
 
     public Optional<User> getUserById(Long userId) {
+        Assert.notNull(userId,"ID must not be null.");
         return userRepository.findById(userId);
     }
     public User login(String email,int password){

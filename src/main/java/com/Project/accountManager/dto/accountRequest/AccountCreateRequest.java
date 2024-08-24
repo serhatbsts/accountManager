@@ -6,6 +6,6 @@ import java.math.BigDecimal;
 
 @Data
 public class AccountCreateRequest {
-    BigDecimal balance;
     Long userId;
+    BigDecimal balance;
 }
