@@ -5,11 +5,11 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
-public class CreateUserRequest {
+public class UpdateUserRequest {
     @Email(message = "Please enter a valid email address")
     @NotEmpty(message = "Email field cannot be empty")
     private String email;
     private String name;
     private String surName;
-    private int password;
+  //  private int password;
 }

@@ -2,9 +2,11 @@ package com.Project.accountManager.services;
 
 import com.Project.accountManager.dto.UserDTO;
 import com.Project.accountManager.dto.userRequest.CreateUserRequest;
+import com.Project.accountManager.dto.userRequest.UpdateUserRequest;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,8 @@ public class UserService {
 
     public UserDTO convertToDto(User user){
         UserDTO userDTO=new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setEmail(user.getEmail());
         userDTO.setName(user.getName());
         userDTO.setSurName(user.getSurName());
         return userDTO;
@@ -28,9 +32,9 @@ public class UserService {
         return userRepository.findAll();
     }
 
-  /*  public User getUserById(Long userId) {
-        return userRepository.findById(userId).orElse(null);
-    }*/
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
     public User login(String email,int password){
         User user=userRepository.findByEmailAndPassword(email,password);
         return user;
@@ -52,13 +56,14 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    public User updateOneUser(Long userId, User newUser) {
+    public User updateOneUser(Long userId, UpdateUserRequest updateUser) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             User foundUser = user.get();
-            foundUser.setName(newUser.getName());
-            foundUser.setSurName(newUser.getSurName());
-            foundUser.setPassword(newUser.getPassword());
+            foundUser.setEmail(updateUser.getEmail());
+            foundUser.setName(updateUser.getName());
+            foundUser.setSurName(updateUser.getSurName());
+          //  foundUser.setPassword(updateUser.getPassword());
             userRepository.save(foundUser);
             return foundUser;
         } else {
