@@ -20,7 +20,7 @@ public class Account {
     private Long id;
     BigDecimal balance;
     @Column(unique = true)
-    private String accountNumber;//stringe çevir
+    private String accountNumber;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -40,19 +40,10 @@ public class Account {
         Random random = new Random();
         StringBuilder accountNumberBuilder = new StringBuilder();
         for (int i = 0; i < 10; i++) {
-            int digit = random.nextInt(10); // 0-9 arasında rastgele bir sayı
+            int digit = random.nextInt(10);
             accountNumberBuilder.append(digit);
         }
         return accountNumberBuilder.toString();
     }
-   /*
-   response kullanılırsa bunu kullan ama response yoksa bunada gerek yok!
-   public static Account toEntity(AccountCreateRequest createRequest,User user){
-        Account account=new Account();
-        account.setMoney(createRequest.getMoney());
-        account.setAccountNumber(createRequest.getAccountNumber());
-        account.setUser(user);
-        return account;
-    }
-    */
+
 }

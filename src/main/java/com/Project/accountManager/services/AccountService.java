@@ -3,12 +3,15 @@ package com.Project.accountManager.services;
 import com.Project.accountManager.dto.accountRequest.AccountCreateRequest;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.entities.User;
+import com.Project.accountManager.exception.CustomNotFoundException;
+import com.Project.accountManager.exception.InsufficientFundsException;
 import com.Project.accountManager.repository.AccountRepository;
 import com.Project.accountManager.dto.accountRequest.AccountDepositRequest;
 import com.Project.accountManager.dto.accountRequest.AccountWithdrawalRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +32,7 @@ public class AccountService {
         User user = optionalUser.get();
         Account toSave = new Account();
         toSave.setBalance(newAccount.getBalance());
+
         toSave.setUser(user);
 
         return accountRepository.save(toSave);
@@ -45,7 +49,7 @@ public class AccountService {
         return accountRepository.findById(accountId).orElse(null);
     }
 
-    public Account depositOneAccount(Long accountId, AccountDepositRequest accountDepositRequest) {
+    public Account depositOneAccount(Long accountId,AccountDepositRequest accountDepositRequest) {
         Optional<Account> account = accountRepository.findById(accountId);
         if (account.isPresent()) {
             Account toUpdate = account.get();
@@ -55,15 +59,21 @@ public class AccountService {
         } else return null;            //custom exception add
     }
 
-    public Account withdrawalAccount(Long accountId, AccountWithdrawalRequest accountWithdrawalRequest) {
+
+    public Account withdrawalAccount(Long accountId,AccountWithdrawalRequest accountWithdrawalRequest) {
         Optional<Account> account = accountRepository.findById(accountId);
         if (account.isPresent()) {
             Account toUpdate = account.get();
-            //the amount of money withdrawn may be more than the amount in the account, correct this situation
-            toUpdate.setBalance(toUpdate.getBalance().subtract(accountWithdrawalRequest.getWithdrawalAmount()));
+            BigDecimal newBalance = toUpdate.getBalance().subtract(accountWithdrawalRequest.getWithdrawalAmount());
+            if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
+                throw new InsufficientFundsException("There is not enough balance in the account");
+            }
+            toUpdate.setBalance(newBalance);
             accountRepository.save(toUpdate);
             return toUpdate;
-        } else return null;            //custom exception add
+        } else {
+            throw new CustomNotFoundException("Account not found");
+        }
     }
 
 

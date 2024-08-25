@@ -43,13 +43,13 @@ public class AccountController {
     }
 
     @PutMapping("/deposit/{accountId}")
-    public Account depositOneAccount(@PathVariable Long accountId, @RequestBody AccountDepositRequest accountDepositRequest) {
-        return accountService.depositOneAccount(accountId, accountDepositRequest);
+    public Account depositOneAccount(@PathVariable Long accountId,@RequestBody AccountDepositRequest accountDepositRequest) {
+        return accountService.depositOneAccount(accountId,accountDepositRequest);
     }
 
     @PutMapping("/withdrawal/{accountId}")
-    public Account withdrawalAccount(@PathVariable Long accountId, @RequestBody AccountWithdrawalRequest accountWithdrawalRequest) {
-        return accountService.withdrawalAccount(accountId, accountWithdrawalRequest);
+    public Account withdrawalAccount(@PathVariable Long accountId,@RequestBody AccountWithdrawalRequest accountWithdrawalRequest) {
+        return accountService.withdrawalAccount(accountId,accountWithdrawalRequest);
     }
 
 
