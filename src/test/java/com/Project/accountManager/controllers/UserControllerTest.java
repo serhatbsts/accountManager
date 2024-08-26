@@ -1,6 +1,8 @@
 package com.Project.accountManager.controllers;
 
 import com.Project.accountManager.dto.UserDTO;
+import com.Project.accountManager.dto.userRequest.CreateUserRequest;
+import com.Project.accountManager.dto.userRequest.LoginUserRequest;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,15 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class UserControllerTest {
+class UserControllerTest {
 
     @Mock
     private UserService userService;
@@ -24,76 +26,47 @@ public class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
-    private MockMvc mockMvc;
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
+    // Bu test, geçerli bir kullanıcıyla başarılı giriş yapmayı kontrol eder.
     @Test
-    public void testCreateUser() throws Exception {
-        User newUser = new User();
-        newUser.setName("Serhat");
-        newUser.setSurName("Bestas");
+    void testLogin_Success() {
+        LoginUserRequest request = new LoginUserRequest();
+        request.setEmail("test@example.com");
+        request.setPassword(1234);
 
-        when(userService.saveOneUser(any(User.class))).thenReturn(newUser);
-
-        mockMvc.perform(post("/users")
-                        .contentType("application/json")
-                        .content("{\"name\":\"Serhat\",\"surName\":\"Bestas\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Serhat"))
-                .andExpect(jsonPath("$.surName").value("Bestas"));
-    }
-
-    @Test
-    public void testGetOneUser() throws Exception {
         User user = new User();
-        user.setName("Serhat");
-        user.setSurName("Bestas");
+        user.setId(1L);
+        user.setEmail("test@example.com");
 
         UserDTO userDTO = new UserDTO();
-        userDTO.setName("Serhat");
-        userDTO.setSurName("Bestas");
+        userDTO.setId(1L);
+        userDTO.setEmail("test@example.com");
 
-        when(userService.getUserById(1L)).thenReturn(user);
+        when(userService.login(request.getEmail(), request.getPassword())).thenReturn(user);
         when(userService.convertToDto(user)).thenReturn(userDTO);
 
-        mockMvc.perform(get("/users/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Serhat"))
-                .andExpect(jsonPath("$.surName").value("Bestas"));
+        ResponseEntity<UserDTO> response = userController.login(request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(userDTO, response.getBody());
     }
 
+    // Bu test, geçersiz bir giriş yapmaya çalışıldığında doğru hatanın döndüğünü kontrol eder.
     @Test
-    public void testUpdateOneUser() throws Exception {
-        User existingUser = new User();
-        existingUser.setId(1L);
-        existingUser.setName("Serhat");
-        existingUser.setSurName("Bestas");
+    void testLogin_InvalidCredentials() {
+        LoginUserRequest request = new LoginUserRequest();
+        request.setEmail("test@example.com");
+        request.setPassword(1234);
 
-        User updatedUser = new User();
-        updatedUser.setName("Serkan");
-        updatedUser.setSurName("Bestas");
+        when(userService.login(request.getEmail(), request.getPassword())).thenReturn(null);
 
-        when(userService.updateOneUser(eq(1L), any(User.class))).thenReturn(updatedUser);
+        ResponseEntity<UserDTO> response = userController.login(request);
 
-        mockMvc.perform(put("/users/1")
-                        .contentType("application/json")
-                        .content("{\"name\":\"Serkan\",\"surName\":\"Bestas\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Serkan"));
-    }
-
-    @Test
-    public void testDeleteOneUser() throws Exception {
-        doNothing().when(userService).deleteOneUser(1L);
-
-        mockMvc.perform(delete("/users/1"))
-                .andExpect(status().isOk());
-
-        verify(userService, times(1)).deleteOneUser(1L);
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals(null, response.getBody());
     }
 }

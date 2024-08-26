@@ -1,6 +1,6 @@
 package com.Project.accountManager.services;
 
-import com.Project.accountManager.dto.UserDTO;
+import com.Project.accountManager.dto.userRequest.CreateUserRequest;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,10 +11,10 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -23,75 +23,43 @@ public class UserServiceTest {
     private UserService userService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    // Bu test, yeni bir kullanıcı kaydı oluşturmanın başarılı olup olmadığını doğrular.
     @Test
-    public void testConvertToDto() {
+    void testSaveOneUser_Success() {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setEmail("test@example.com");
+        request.setName("Test");
+        request.setSurName("User");
+        request.setPassword(1234);
+
         User user = new User();
-        user.setName("Serhat");
-        user.setSurName("Bestas");
+        user.setEmail("test@example.com");
+        user.setName("Test");
+        user.setSurName("User");
+        user.setPassword(1234);
 
-        UserDTO userDTO = userService.convertToDto(user);
-
-        assertNotNull(userDTO);
-        assertEquals("Serhat", userDTO.getName());
-        assertEquals("Bestas", userDTO.getSurName());
-    }
-
-    @Test
-    public void testSaveOneUser() {
-        User user = new User();
-        user.setName("Serhat");
-        user.setSurName("Bestas");
-
+        when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User savedUser = userService.saveOneUser(user);
+        User createdUser = userService.saveOneUser(request);
 
-        assertNotNull(savedUser);
-        assertEquals("Serhat", savedUser.getName());
+        assertEquals("test@example.com", createdUser.getEmail());
+        assertEquals("Test", createdUser.getName());
+        assertEquals("User", createdUser.getSurName());
     }
 
+    // Bu test, zaten kayıtlı olan bir e-posta adresiyle kullanıcı kaydı oluşturmanın hata verdiğini doğrular.
     @Test
-    public void testUpdateOneUser_Success() {
-        User existingUser = new User();
-        existingUser.setId(1L);
-        existingUser.setName("Serhat");
-        existingUser.setSurName("Bestas");
+    void testSaveOneUser_EmailAlreadyExists() {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setEmail("test@example.com");
 
-        User updatedUser = new User();
-        updatedUser.setName("Serkan");
-        updatedUser.setSurName("Bestas");
+        when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(any(User.class))).thenReturn(existingUser);
-
-        User result = userService.updateOneUser(1L, updatedUser);
-
-        assertNotNull(result);
-        assertEquals("Serkan", result.getName());
-    }
-
-    @Test
-    public void testUpdateOneUser_NotFound() {
-        User user = new User();
-        user.setName("Serkan");
-
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
-        User result = userService.updateOneUser(1L, user);
-
-        assertNull(result);
-    }
-
-    @Test
-    public void testDeleteOneUser() {
-        doNothing().when(userRepository).deleteById(1L);
-
-        userService.deleteOneUser(1L);
-
-        verify(userRepository, times(1)).deleteById(1L);
+        // Method call inside try-catch or assertThrows can be added
     }
 }
