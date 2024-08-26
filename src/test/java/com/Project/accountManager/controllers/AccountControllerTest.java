@@ -1,8 +1,6 @@
 package com.Project.accountManager.controllers;
 
 import com.Project.accountManager.dto.accountRequest.AccountCreateRequest;
-import com.Project.accountManager.dto.accountRequest.AccountDepositRequest;
-import com.Project.accountManager.dto.accountRequest.AccountWithdrawalRequest;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.services.AccountService;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,86 +8,54 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import java.math.BigDecimal;
+import java.util.Optional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class AccountControllerTest {
+class AccountControllerTest {
 
-/*    @Mock
-  /  private AccountService accountService;
+    @Mock
+    private AccountService accountService;
 
     @InjectMocks
     private AccountController accountController;
 
-    private MockMvc mockMvc;
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(accountController).build();
     }
 
+    // Bu test, yeni bir hesap oluşturma işleminin başarılı olup olmadığını kontrol eder.
     @Test
-    public void testCreateAccount() throws Exception {
+    void testCreateAccount_Success() {
         AccountCreateRequest request = new AccountCreateRequest();
-        request.setBalance(BigDecimal.valueOf(1000));
         request.setUserId(1L);
+        request.setBalance(new BigDecimal("100.00"));
 
         Account account = new Account();
-        account.setBalance(BigDecimal.valueOf(1000));
+        account.setId(1L);
+        account.setBalance(new BigDecimal("100.00"));
 
         when(accountService.createAccount(any(AccountCreateRequest.class))).thenReturn(account);
 
-        mockMvc.perform(post("/user_accounts")
-                        .contentType("application/json")
-                        .content("{\"balance\":1000,\"userId\":1}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.balance").value(1000));
+        ResponseEntity<?> response = accountController.createAccount(request);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(account, response.getBody());
     }
 
+    // Bu test, userId'nin null olduğu durumlarda hesabın oluşturulmasını engeller.
     @Test
-    public void testDepositOneAccount() throws Exception {
-        Account account = new Account();
-        account.setId(1L);
-        account.setBalance(BigDecimal.valueOf(1500));
+    void testCreateAccount_MissingUserId() {
+        AccountCreateRequest request = new AccountCreateRequest();
 
-        AccountDepositRequest depositRequest = new AccountDepositRequest();
-        depositRequest.setDepositAmount(BigDecimal.valueOf(500));
+        ResponseEntity<?> response = accountController.createAccount(request);
 
-
-        when(accountService.depositOneAccount(anyLong(), any(AccountDepositRequest.class))).thenReturn(account);
-
-        mockMvc.perform(put("/user_accounts/deposit/1")
-                        .contentType("application/json")
-                        .content("{\"depositAmount\":500}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.balance").value(1500));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("User ID must not be null", response.getBody());
     }
-
-
-    @Test
-    public void testWithdrawalAccount() throws Exception {
-        Account account = new Account();
-        account.setId(1L);
-        account.setBalance(BigDecimal.valueOf(700)); // Sonuç balansı doğru olmalı
-
-        AccountWithdrawalRequest withdrawalRequest = new AccountWithdrawalRequest();
-        withdrawalRequest.setWithdrawalAmount(BigDecimal.valueOf(300));
-
-        when(accountService.withdrawalAccount(anyLong(), any(AccountWithdrawalRequest.class))).thenReturn(account);
-
-        mockMvc.perform(put("/user_accounts/withdrawal/1")
-                        .contentType("application/json")
-                        .content("{\"withdrawalAmount\":300}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.balance").value(700));
-    }
-*/
 }

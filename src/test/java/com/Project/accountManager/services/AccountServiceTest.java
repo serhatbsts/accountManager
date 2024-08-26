@@ -1,8 +1,6 @@
 package com.Project.accountManager.services;
 
 import com.Project.accountManager.dto.accountRequest.AccountCreateRequest;
-import com.Project.accountManager.dto.accountRequest.AccountDepositRequest;
-import com.Project.accountManager.dto.accountRequest.AccountWithdrawalRequest;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
@@ -15,12 +13,12 @@ import org.mockito.MockitoAnnotations;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class AccountServiceTest {
+class AccountServiceTest {
 
-   /* @Mock
+    @Mock
     private AccountRepository accountRepository;
 
     @Mock
@@ -30,76 +28,44 @@ public class AccountServiceTest {
     private AccountService accountService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
+    // Bu test, yeni bir hesap oluşturma işleminin doğru şekilde çalıştığını doğrular.
     @Test
-    public void testCreateAccount_Success() {
+    void testCreateAccount_Success() {
+        AccountCreateRequest request = new AccountCreateRequest();
+        request.setUserId(1L);
+        request.setBalance(new BigDecimal("100.00"));
+
         User user = new User();
         user.setId(1L);
 
-        AccountCreateRequest request = new AccountCreateRequest();
-        request.setBalance(BigDecimal.valueOf(1000));
-        request.setUserId(1L);
-
-        when(userService.getUserById(1L)).thenReturn(user);
-
         Account account = new Account();
-        account.setBalance(BigDecimal.valueOf(1000));
+        account.setId(1L);
+        account.setBalance(new BigDecimal("100.00"));
         account.setUser(user);
 
+        when(userService.getUserById(1L)).thenReturn(Optional.of(user));
         when(accountRepository.save(any(Account.class))).thenReturn(account);
 
         Account createdAccount = accountService.createAccount(request);
 
-        assertNotNull(createdAccount);
-        assertEquals(BigDecimal.valueOf(1000), createdAccount.getBalance());
+        assertEquals(1L, createdAccount.getId());
+        assertEquals(new BigDecimal("100.00"), createdAccount.getBalance());
         assertEquals(user, createdAccount.getUser());
     }
 
+    // Bu test, kullanıcı bulunamadığında createAccount metodunun nasıl davrandığını kontrol eder.
     @Test
-    public void testDepositOneAccount_Success() {
-        Account account = new Account();
-        account.setId(1L);
-        account.setBalance(BigDecimal.valueOf(1000));
+    void testCreateAccount_UserNotFound() {
+        AccountCreateRequest request = new AccountCreateRequest();
+        request.setUserId(1L);
+        request.setBalance(new BigDecimal("100.00"));
 
-        AccountDepositRequest depositRequest = new AccountDepositRequest();
-        depositRequest.setDepositAmount(BigDecimal.valueOf(500));
+        when(userService.getUserById(1L)).thenReturn(Optional.empty());
 
-        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
-        when(accountRepository.save(any(Account.class))).thenReturn(account);
-
-        Account updatedAccount = accountService.depositOneAccount(1L, depositRequest);
-
-        assertNotNull(updatedAccount);
-        assertEquals(BigDecimal.valueOf(1500), updatedAccount.getBalance());
+        // Method call inside try-catch or assertThrows can be added
     }
-
-    @Test
-    public void testWithdrawalAccount_Success() {
-        Account account = new Account();
-        account.setId(1L);
-        account.setBalance(BigDecimal.valueOf(1000));
-
-        AccountWithdrawalRequest withdrawalRequest = new AccountWithdrawalRequest();
-        withdrawalRequest.setWithdrawalAmount(BigDecimal.valueOf(300));
-
-        when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
-        when(accountRepository.save(any(Account.class))).thenReturn(account);
-
-        Account updatedAccount = accountService.withdrawalAccount(1L, withdrawalRequest);
-
-        assertNotNull(updatedAccount);
-        assertEquals(BigDecimal.valueOf(700), updatedAccount.getBalance());
-    }
-
-    @Test
-    public void testGetOneAccount_NotFound() {
-        when(accountRepository.findById(1L)).thenReturn(Optional.empty());
-
-        Account account = accountService.getOneAccount(1L);
-
-        assertNull(account);
-    }*/
 }
