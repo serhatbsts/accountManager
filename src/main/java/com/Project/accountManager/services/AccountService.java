@@ -8,7 +8,6 @@ import com.Project.accountManager.exception.InsufficientFundsException;
 import com.Project.accountManager.repository.AccountRepository;
 import com.Project.accountManager.dto.accountRequest.AccountDepositRequest;
 import com.Project.accountManager.dto.accountRequest.AccountWithdrawalRequest;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
