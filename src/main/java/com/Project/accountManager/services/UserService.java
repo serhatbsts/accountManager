@@ -19,19 +19,21 @@ public class UserService {
 
     public UserDTO convertToDto(User user){
         UserDTO userDTO=new UserDTO();
-        userDTO.setId(user.getId());
+        //userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         userDTO.setSurName(user.getSurName());
         return userDTO;
     }
 
+  /*
     public User convertToEntity(UserDTO userDTO){
         User user =new User();
-        user.setId(userDTO.getId());
+      //  user.setId(userDTO.getId());
         user.setName(userDTO.getName());
         user.setSurName(userDTO.getSurName());
         return user;
     }
+    */
     public List<User> getAllUser() {
         return userRepository.findAll();
     }

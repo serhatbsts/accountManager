@@ -2,10 +2,10 @@ package com.Project.accountManager.dto.request;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class AccountCreateRequest {
-    Long id;
-    int accountNumber;
-    int money;
+    BigDecimal balance;
     Long userId;
 }
