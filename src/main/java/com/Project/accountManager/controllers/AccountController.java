@@ -1,11 +1,11 @@
 package com.Project.accountManager.controllers;
 
-import com.Project.accountManager.dto.AccountResponse;
+import com.Project.accountManager.dto.accountRequest.AccountCreateRequest;
 import com.Project.accountManager.entities.Account;
-import com.Project.accountManager.dto.request.AccountCreateRequest;
-import com.Project.accountManager.dto.request.AccountDepositRequest;
-import com.Project.accountManager.dto.request.AccountWithdrawalRequest;
+import com.Project.accountManager.dto.accountRequest.AccountDepositRequest;
+import com.Project.accountManager.dto.accountRequest.AccountWithdrawalRequest;
 import com.Project.accountManager.services.AccountService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +27,14 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<AccountResponse> createAccount(@RequestBody AccountCreateRequest newAccount) {
-        return ResponseEntity.ok(accountService.createAccount(newAccount));
+    public ResponseEntity<?> createAccount(@RequestBody AccountCreateRequest newAccount) {
+        if (newAccount.getUserId() == null) {
+            return ResponseEntity.badRequest().body("User ID must not be null");
+        }
+        Account account = accountService.createAccount(newAccount);
+        return new ResponseEntity<>(account, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/{accountId}")
     public Account getOneAccount(@PathVariable Long accountId) {
@@ -37,19 +42,20 @@ public class AccountController {
     }
 
     @PutMapping("/deposit/{accountId}")
-    public Account depositOneAccount(@PathVariable Long accountId, @RequestBody AccountDepositRequest accountDepositRequest) {
-        return accountService.depositOneAccount(accountId, accountDepositRequest);
+    public Account depositOneAccount(@PathVariable Long accountId,@RequestBody AccountDepositRequest accountDepositRequest) {
+        return accountService.depositOneAccount(accountId,accountDepositRequest);
     }
 
     @PutMapping("/withdrawal/{accountId}")
-    public Account withdrawalAccount(@PathVariable Long accountId, @RequestBody AccountWithdrawalRequest accountWithdrawalRequest) {
-        return accountService.withdrawalAccount(accountId, accountWithdrawalRequest);
+    public Account withdrawalAccount(@PathVariable Long accountId,@RequestBody AccountWithdrawalRequest accountWithdrawalRequest) {
+        return accountService.withdrawalAccount(accountId,accountWithdrawalRequest);
     }
 
 
     @DeleteMapping("/{accountId}")
     public void deleteOneAccount(@PathVariable Long accountId) {
         accountService.deleteOneAccount(accountId);
+
     }
 
 }
