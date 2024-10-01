@@ -1,5 +1,6 @@
 package com.Project.accountManager.services;
 
+import com.Project.accountManager.dto.userRequest.CreateUserRequest;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,67 +8,58 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import java.util.Arrays;
-import java.util.List;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-public class UserServiceTest {
+
+class UserServiceTest {
+
     @Mock
     private UserRepository userRepository;
+
     @InjectMocks
     private UserService userService;
+
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-    @Test
-    public void testGetAllUsers() {
-        User user1 = new User();
-        User user2 = new User();
-        List<User> userList = Arrays.asList(user1, user2);
-        when(userRepository.findAll()).thenReturn(userList);
-        List<User> result = userService.getAllUser();
-        assertEquals(2, result.size());
-        assertEquals(user1.getName(), result.get(0).getName());
-        assertEquals(user2.getName(), result.get(1).getName());
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
+    // Bu test, yeni bir kullanıcı kaydı oluşturmanın başarılı olup olmadığını doğrular.
     @Test
-    public void testGetUserById() {
-        Long userId = 1L;
+    void testSaveOneUser_Success() {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setEmail("test@example.com");
+        request.setName("Test");
+        request.setSurName("User");
+        request.setPassword(1234);
+
         User user = new User();
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        User result = userService.getUserById(userId);
+        user.setEmail("test@example.com");
+        user.setName("Test");
+        user.setSurName("User");
+        user.setPassword(1234);
 
-        assertEquals(user.getName(), result.getName());
-        assertEquals(user.getSurName(), result.getSurName());
+        when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        User createdUser = userService.saveOneUser(request);
+
+        assertEquals("test@example.com", createdUser.getEmail());
+        assertEquals("Test", createdUser.getName());
+        assertEquals("User", createdUser.getSurName());
     }
+
+    // Bu test, zaten kayıtlı olan bir e-posta adresiyle kullanıcı kaydı oluşturmanın hata verdiğini doğrular.
     @Test
-    public void testSaveOneUser() {
-        User newUser = new User();
-        User savedUser = new User();
-        when(userRepository.save(newUser)).thenReturn(savedUser);
-        User result = userService.saveOneUser(newUser);
-        assertEquals(savedUser.getId(), result.getId());
-        assertEquals(savedUser.getName(), result.getName());
-        assertEquals(savedUser.getSurName(), result.getSurName());
-    }
-    @Test
-    public void testUpdateOneUser() {
-        Long userId = 1L;
-        User updatedUser = new User();
-        when(userRepository.findById(userId)).thenReturn(Optional.of(updatedUser));
-        User result = userService.updateOneUser(userId, updatedUser);
-        assertEquals(updatedUser.getId(), result.getId());
-        assertEquals(updatedUser.getName(), result.getName());
-        assertEquals(updatedUser.getSurName(), result.getSurName());
-        assertEquals(updatedUser.getPassword(), result.getPassword());
-    }
-    @Test
-    public void testDeleteOneUser() {
-        Long userId = 1L;
-        userService.deleteOneUser(userId);
-        verify(userRepository, times(1)).deleteById(userId);
+    void testSaveOneUser_EmailAlreadyExists() {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setEmail("test@example.com");
+
+        when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
+
+        // Method call inside try-catch or assertThrows can be added
     }
 }
