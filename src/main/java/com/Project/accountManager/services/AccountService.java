@@ -1,6 +1,5 @@
 package com.Project.accountManager.services;
 
-import com.Project.accountManager.dto.AccountResponse;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.entities.User;
 import com.Project.accountManager.repository.AccountRepository;
@@ -22,22 +21,20 @@ public class AccountService {
         this.userService = userService;
     }
 
-    public AccountResponse createAccount(AccountCreateRequest newAccount) {
+
+   public Account createAccount(AccountCreateRequest newAccount) {
         User user = userService.getUserById(newAccount.getUserId());
         if (user == null) {
             return null;
             //custom exception add
         }
-        Account account=Account.toEntity(newAccount,user);
-        accountRepository.save(account);
-        return AccountResponse.builder()
-                .accountNumber(account.getAccountNumber())
-                .money(account.getMoney())
-                .userName(account.getUser().getName())
-                .build();
-
+        Account toSave = new Account();
+      //  toSave.setId(newAccount.getId());
+     //   toSave.setAccountNumber(newAccount.getAccountNumber());
+        toSave.setBalance(newAccount.getBalance());
+        toSave.setUser(user);
+        return accountRepository.save(toSave);
     }
-
     public List<Account> getAllAccount(Optional<Long> userId) {
         if (userId.isPresent()) {
             return accountRepository.findByUserId(userId.get());
@@ -54,7 +51,7 @@ public class AccountService {
         Optional<Account> account = accountRepository.findById(accountId);
         if (account.isPresent()) {
             Account toUpdate = account.get();
-            toUpdate.setMoney(toUpdate.getMoney() + accountDepositRequest.getDepositAmount());
+            toUpdate.setBalance(toUpdate.getBalance().add(accountDepositRequest.getDepositAmount()));
             accountRepository.save(toUpdate);
             return toUpdate;
         } else return null;            //custom exception add
@@ -65,7 +62,7 @@ public class AccountService {
         if (account.isPresent()) {
             Account toUpdate = account.get();
             //the amount of money withdrawn may be more than the amount in the account, correct this situation
-            toUpdate.setMoney(toUpdate.getMoney() - accountWithdrawalRequest.getWithdrawalAmount());
+            toUpdate.setBalance(toUpdate.getBalance().subtract(accountWithdrawalRequest.getWithdrawalAmount()));
             accountRepository.save(toUpdate);
             return toUpdate;
         } else return null;            //custom exception add

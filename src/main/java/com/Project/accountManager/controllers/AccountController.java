@@ -1,12 +1,10 @@
 package com.Project.accountManager.controllers;
 
-import com.Project.accountManager.dto.AccountResponse;
 import com.Project.accountManager.entities.Account;
 import com.Project.accountManager.dto.request.AccountCreateRequest;
 import com.Project.accountManager.dto.request.AccountDepositRequest;
 import com.Project.accountManager.dto.request.AccountWithdrawalRequest;
 import com.Project.accountManager.services.AccountService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,10 +24,11 @@ public class AccountController {
         return accountService.getAllAccount(userId);
     }
 
-    @PostMapping
-    public ResponseEntity<AccountResponse> createAccount(@RequestBody AccountCreateRequest newAccount) {
-        return ResponseEntity.ok(accountService.createAccount(newAccount));
+   @PostMapping
+    public Account createAccount(@RequestBody AccountCreateRequest newAccount) {
+        return accountService.createAccount(newAccount);
     }
+
 
     @GetMapping("/{accountId}")
     public Account getOneAccount(@PathVariable Long accountId) {
@@ -50,6 +49,7 @@ public class AccountController {
     @DeleteMapping("/{accountId}")
     public void deleteOneAccount(@PathVariable Long accountId) {
         accountService.deleteOneAccount(accountId);
+
     }
 
 }
