@@ -9,5 +9,4 @@ class AccountResponseManagerApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }

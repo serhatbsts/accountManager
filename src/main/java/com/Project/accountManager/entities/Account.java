@@ -35,7 +35,7 @@ public class Account {
         }
     }
 
-    private String generateAccountNumber() {
+     String generateAccountNumber() {
         // Örneğin: 10 basamaklı rastgele bir sayı oluşturma
         Random random = new Random();
         StringBuilder accountNumberBuilder = new StringBuilder();
