@@ -1,10 +1,12 @@
 package com.Project.accountManager.controllers;
 
+import com.Project.accountManager.dto.accountRequest.AccountCreateRequest;
 import com.Project.accountManager.entities.Account;
-import com.Project.accountManager.dto.request.AccountCreateRequest;
-import com.Project.accountManager.dto.request.AccountDepositRequest;
-import com.Project.accountManager.dto.request.AccountWithdrawalRequest;
+import com.Project.accountManager.dto.accountRequest.AccountDepositRequest;
+import com.Project.accountManager.dto.accountRequest.AccountWithdrawalRequest;
 import com.Project.accountManager.services.AccountService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,9 +26,13 @@ public class AccountController {
         return accountService.getAllAccount(userId);
     }
 
-   @PostMapping
-    public Account createAccount(@RequestBody AccountCreateRequest newAccount) {
-        return accountService.createAccount(newAccount);
+    @PostMapping
+    public ResponseEntity<?> createAccount(@RequestBody AccountCreateRequest newAccount) {
+        if (newAccount.getUserId() == null) {
+            return ResponseEntity.badRequest().body("User ID must not be null");
+        }
+        Account account = accountService.createAccount(newAccount);
+        return new ResponseEntity<>(account, HttpStatus.CREATED);
     }
 
 
@@ -36,13 +42,13 @@ public class AccountController {
     }
 
     @PutMapping("/deposit/{accountId}")
-    public Account depositOneAccount(@PathVariable Long accountId, @RequestBody AccountDepositRequest accountDepositRequest) {
-        return accountService.depositOneAccount(accountId, accountDepositRequest);
+    public Account depositOneAccount(@PathVariable Long accountId,@RequestBody AccountDepositRequest accountDepositRequest) {
+        return accountService.depositOneAccount(accountId,accountDepositRequest);
     }
 
     @PutMapping("/withdrawal/{accountId}")
-    public Account withdrawalAccount(@PathVariable Long accountId, @RequestBody AccountWithdrawalRequest accountWithdrawalRequest) {
-        return accountService.withdrawalAccount(accountId, accountWithdrawalRequest);
+    public Account withdrawalAccount(@PathVariable Long accountId,@RequestBody AccountWithdrawalRequest accountWithdrawalRequest) {
+        return accountService.withdrawalAccount(accountId,accountWithdrawalRequest);
     }
 
 
