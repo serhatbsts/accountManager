@@ -47,7 +47,7 @@ class AccountControllerTest {
         Account account = new Account();
         account.setId(1L);
 
-        when(accountService.createAccount(request)).thenReturn(account);
+        when(accountService.createAccount(any(AccountCreateRequest.class))).thenReturn(account);
 
         ResponseEntity<?> response = accountController.createAccount(request);
 

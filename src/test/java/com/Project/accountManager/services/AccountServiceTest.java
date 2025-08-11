@@ -38,7 +38,7 @@ class AccountServiceTest {
     private Account testAccount;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         testUser = new User();
         testUser.setId(1L);
         testUser.setEmail("test@example.com");
@@ -64,6 +64,7 @@ class AccountServiceTest {
         assertNotNull(createdAccount);
         assertEquals(testAccount.getBalance(), createdAccount.getBalance());
         assertEquals(testUser, createdAccount.getUser());
+        verify(userService, times(1)).getUserById(1L);
         verify(accountRepository, times(1)).save(any(Account.class));
     }
 

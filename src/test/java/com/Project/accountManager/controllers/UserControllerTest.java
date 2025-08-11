@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -153,7 +154,7 @@ class UserControllerTest {
         userDTO.setName("Test");
         userDTO.setSurName("User");
 
-        when(userService.getUserById(userId)).thenReturn(java.util.Optional.of(user));
+        when(userService.getUserById(userId)).thenReturn(Optional.of(user));
         when(userService.convertToDto(user)).thenReturn(userDTO);
 
         ResponseEntity<UserDTO> response = userController.getUserById(userId);
@@ -170,7 +171,7 @@ class UserControllerTest {
     void getUserById_NotFound() {
         Long userId = 1L;
 
-        when(userService.getUserById(userId)).thenReturn(java.util.Optional.empty());
+        when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
         ResponseEntity<UserDTO> response = userController.getUserById(userId);
 
